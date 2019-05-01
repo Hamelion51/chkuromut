@@ -1,0 +1,25 @@
+<?php
+	$token = "ACCESS_TOKEN"; // Токен
+	$post_id = "0123456789"; // ID поста. Пример: vk.com/wall220353117_2584, вводим то что после _, то есть 2584
+	
+	$friends = by("friends.get?v=5.8&fields=sex&access_token=".$token);
+	if($friends["count"] >= 1000) {
+		$count = 1000;
+	} else {
+		$count = $friends["count"];
+	}
+	$rand = rand(0 , $count);
+	$text = "↪ШКУРОГЕНЕРАТОР↩\nНашли новую шкуру: [id".$friends["items"][$rand]["id"]."|".$friends["items"][$rand]["first_name"]." ".$friends["items"][$rand]["last_name"]."] 👄 💃";
+	by("wall.addComment?post_id=".$post_id."&text=".urlencode($text)."&access_token=".$token);
+	
+	function by($method){
+		$ch = curl_init("https://api.vk.com/method/".$method);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+		curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
+		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
+		$response = curl_exec($ch);
+		curl_close($ch);
+		$json = json_decode($response, true);
+		return $json["response"];
+	}
+?>
